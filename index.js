@@ -1,20 +1,30 @@
-import json
-import requests  # библиотека для отправки логов на другой сервер
-from fastapi import FastAPI, Request
+export default {
+  async fetch(request, env, ctx) {
+    try {
+      // Это аналог вашей строки: body = event.get('body', '')
+      const bodyText = await request.text();
 
-app = FastAPI()
+      // Это аналог вашего: str(json.loads(body)) для вывода логов в консоль
+      console.log("Полученные логи:", bodyText);
 
-@app.post("/")
-async def handler(request: Request):
-    # Получаем тело POST-запроса (аналог event.get('body'))
-    body_bytes = await request.body()
-    body_str = body_bytes.decode('utf-8')
+      // ЕСЛИ НАДО ОТПРАВИТЬ ЛОГИ НА ВНЕШНИЙ СЕРВЕР АНАЛИТИКИ:
+      // Раскомментируйте строки ниже и замените URL на ваш сервак:
+      /*
+      await fetch('https://xn-----6kccahcxb7aaazl2a7bcn4a0i.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: bodyText
+      });
+      */
 
-    # Сюда вы вставляете отправку логов на ваш сервер аналитики
-    # Например:
-    # requests.post("https://your-analytics-server.com", data=body_str)
-    
-    print(f"Полученные логи: {body_str}")  # это отобразится в админке
+    } catch (error) {
+      console.error("Ошибка обработки запроса:", error);
+    }
 
-    # Возвращаем ответ
-    return {"statusCode": 200, "body": "Hello World!"}
+    // Это аналог вашего return { 'statusCode': 200, 'body': 'Hello World!' }
+    return new Response('Hello World!', {
+      status: 200,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+    });
+  },
+};
